@@ -824,7 +824,7 @@ def old_main2(n=2):
     else:
         print "product"
     return g
-def main(n=2):
+def old_main3(n=2):
     '''Returns a tuple, where each element
     is a set of nodes that lie in the same 
     connected graph'''
@@ -919,3 +919,83 @@ def connects_to_main(node, all_automorphisms, all_middle, all_end ):
         neighbors = set()
         working -= searched
     return searched   
+def main(n=2):
+    '''Returns a tuple, where each element
+    is a set of nodes that lie in the same 
+    connected graph'''
+    import time, random
+    start_time = time.time()
+    temp_count = 0
+    all_products = Product.most_products(n) #Only 48^(n-1) products
+    short_transformations = []
+    short_transformations += Large_Transformation.get_all_automorphisms(n)
+    short_transformations += Large_Transformation.get_all_middle_transformations(n)
+    short_transformations += Large_Transformation.get_all_end_transformations(n)
+    short_transformations += ["conjugate","equivalents"]
+    print "Done creating list of transformations"
+    connected = []
+    for x in all_products:
+        x.standardize()
+        connected.append(  [x]  )
+    all_products = None
+    print "Done putting products in individual lists"
+    while True:
+        r = random.randint( 0, len(connected) - 1 )
+        current_eq_class = connected.pop(r)
+        r = random.randint( 0, len(current) - 1 )
+        current_product = current[r]
+        r = random.randint( 0, len(short_transformations) - 1)
+        t = short_transformations[r]
+        if t == "equivalents":
+            eqs = current_product.get_equivalents()
+            if len(eqs) == 0:
+                t = "conjugate"
+            else:
+                r = random.randint( 0, len(eqs) - 1)
+                final = eqs[r]
+        elif t == "conjugate":
+            final = current_product.get_conjugate()
+        else:
+            final = t.apply(current_product)
+        if final in current_eq_class:
+            connected.append( current_eq_class )
+        else:
+            #Find the list in connected and add all of current_eq_class to it.
+            #Actually, we should check that it's in the 48^n. If not, apply 
+            #another transformation.
+        temp_count += 1
+        print "Found", temp_count, "equivalence classes so far"
+        print "The latest one has",len(connected),"elements"
+        all_products_left -= all_products_found_so_far
+    count = len(result)
+    file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
+    f = open(file_name, "a")
+    end_time = time.time()
+    f.write("This program took " + str(int(end_time - start_time)) + " seconds\n")
+    f.write("\nThe program found " + str(count) + " distinct equivalence class")
+    if count != 1:
+        f.write("es")
+    f.write("\n")
+    f.write("\n\nHere's a human-readable version of the set of connected nodes.\n")
+    f.write("The program does not print any products that have a permutation that doesn't start with +1\n")
+    for equivalence_class in result:
+        f.write("-----------------------\n")
+        for product in equivalence_class:
+            p = str(product)
+            if p.count("(1") == n:
+                f.write(p + "\n")
+    f.write("\n\nHere's a somewhat human-readable version of the set of connected nodes:\n")
+    for equivalence_class in result:
+        f.write("-----------------------\n")
+        for product in equivalence_class:
+            p = str(product)
+            f.write(p+"\n")
+    f.write("Here's the set(s) of connected nodes:\n")
+    f.write(str(result))
+    f.close()
+    print "This program took " + str(int(end_time - start_time)) + " seconds\n"
+    print "The program found " + str(count) + " distinct",
+    if count != 1:
+        print "equivalence classes"
+    else:
+        print "equivalence class"
