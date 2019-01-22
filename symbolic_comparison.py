@@ -457,6 +457,12 @@ class Product:
         for x in perm_tuple:
             result.append( x.get_signed_tuple() )
         return tuple(result)
+    def is_in_most(self):
+        result = True
+        for x in self.get_perm_tuple():
+            if x not in Product.most_factors:
+                result = False
+        return result
     def get_equivalents(self):
         '''Looks for any two consecutive factors
         that are conjugates. Makes a new Product
@@ -919,10 +925,10 @@ def connects_to_main(node, all_automorphisms, all_middle, all_end ):
         neighbors = set()
         working -= searched
     return searched   
-def main(n=2):
-    '''Returns a tuple, where each element
-    is a set of nodes that lie in the same 
-    connected graph'''
+def main(n=2, time_between_reports = 1800):
+#    '''Returns a tuple, where each element
+#    is a set of nodes that lie in the same 
+#    connected graph'''
     import time, random
     start_time = time.time()
     temp_count = 0
@@ -939,63 +945,77 @@ def main(n=2):
         connected.append(  [x]  )
     all_products = None
     print "Done putting products in individual lists"
-    while True:
-        r = random.randint( 0, len(connected) - 1 )
-        current_eq_class = connected.pop(r)
-        r = random.randint( 0, len(current) - 1 )
-        current_product = current[r]
-        r = random.randint( 0, len(short_transformations) - 1)
-        t = short_transformations[r]
-        if t == "equivalents":
-            eqs = current_product.get_equivalents()
-            if len(eqs) == 0:
-                t = "conjugate"
+    while len(connected) > 1:
+        checkpoint = time.time()
+        while time.time() - checkpoint < time_between_reports:
+            r = random.randint( 0, len(connected) - 1 )
+            current_eq_class = connected.pop(r)
+            r = random.randint( 0, len(current_eq_class) - 1 )
+            current_product = current_eq_class[r]
+            temp = None
+            while temp == None or not temp.is_in_most():
+                if temp == None:
+                    temp = current_product
+                r = random.randint( 0, len(short_transformations) - 1)
+                t = short_transformations[r]
+                if t == "equivalents":
+                    eqs = temp.get_equivalents()
+                    if len(eqs) == 0:
+                        t = "conjugate"
+                    else:
+                        r = random.randint( 0, len(eqs) - 1)
+                        temp = eqs[r]
+                elif t == "conjugate":
+                    temp = temp.get_conjugate()
+                else:
+                    temp = t.apply(temp)
+                temp.standardize()
+            #Now temp is in the 48^(n-1)
+            if temp in current_eq_class:
+                connected.append( current_eq_class )
             else:
-                r = random.randint( 0, len(eqs) - 1)
-                final = eqs[r]
-        elif t == "conjugate":
-            final = current_product.get_conjugate()
-        else:
-            final = t.apply(current_product)
-        if final in current_eq_class:
-            connected.append( current_eq_class )
-        else:
             #Find the list in connected and add all of current_eq_class to it.
-            #Actually, we should check that it's in the 48^n. If not, apply 
-            #another transformation.
-        temp_count += 1
-        print "Found", temp_count, "equivalence classes so far"
-        print "The latest one has",len(connected),"elements"
-        all_products_left -= all_products_found_so_far
-    count = len(result)
-    file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
-    f = open(file_name, "a")
-    end_time = time.time()
-    f.write("This program took " + str(int(end_time - start_time)) + " seconds\n")
-    f.write("\nThe program found " + str(count) + " distinct equivalence class")
-    if count != 1:
-        f.write("es")
-    f.write("\n")
-    f.write("\n\nHere's a human-readable version of the set of connected nodes.\n")
-    f.write("The program does not print any products that have a permutation that doesn't start with +1\n")
-    for equivalence_class in result:
-        f.write("-----------------------\n")
-        for product in equivalence_class:
-            p = str(product)
-            if p.count("(1") == n:
-                f.write(p + "\n")
-    f.write("\n\nHere's a somewhat human-readable version of the set of connected nodes:\n")
-    for equivalence_class in result:
-        f.write("-----------------------\n")
-        for product in equivalence_class:
-            p = str(product)
-            f.write(p+"\n")
-    f.write("Here's the set(s) of connected nodes:\n")
-    f.write(str(result))
-    f.close()
-    print "This program took " + str(int(end_time - start_time)) + " seconds\n"
-    print "The program found " + str(count) + " distinct",
-    if count != 1:
-        print "equivalence classes"
-    else:
-        print "equivalence class"
+                for other_class in connected:
+                    if temp in other_class:
+                        break
+                else:
+                    raise Exception("Can't find where temp belongs. Temp = " + str(temp))
+                for x in current_eq_class:
+                    other_class.append(x)
+#        temp_count += 1
+#        print "Found", temp_count, "equivalence classes so far"
+#        print "The latest one has",len(connected),"elements"
+#        all_products_left -= all_products_found_so_far
+        count = len(connected)
+        file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
+        file_name += " with checkpoint at " + str(int(checkpoint))
+        f = open(file_name, "a")
+        end_time = time.time()
+        f.write("This program took " + str(int(end_time - start_time)) + " seconds\n")
+        f.write("\nThe program found " + str(count) + " distinct equivalence class")
+        if count != 1:
+            f.write("es")
+        f.write("\n")
+        f.write("\n\nHere's a human-readable version of the set of connected nodes.\n")
+        f.write("The program does not print any products that have a permutation that doesn't start with +1\n")
+        for equivalence_class in connected:
+            f.write("-----------------------\n")
+            for product in equivalence_class:
+                p = str(product)
+                if p.count("(1") == n:
+                    f.write(p + "\n")
+#        f.write("\n\nHere's a somewhat human-readable version of the set of connected nodes:\n")
+#        for equivalence_class in result:
+#            f.write("-----------------------\n")
+#            for product in equivalence_class:
+#                p = str(product)
+#                f.write(p+"\n")
+        f.write("Here's the list(s) of connected nodes:\n")
+        f.write(str(connected))
+        f.close()
+        print "This program took " + str(int(end_time - start_time)) + " seconds\n"
+        print "The program found " + str(count) + " distinct",
+        if count != 1:
+            print "equivalence classes"
+        else:
+            print "equivalence class"
