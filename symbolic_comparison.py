@@ -670,11 +670,23 @@ class Graph:
 #            print self.visit
             new = self.visit(seen_so_far, n)
             seen_so_far = new | seen_so_far
-        return seen_so_far 
-    def find_path(self, node1, node2, path_so_far = None):
+        return seen_so_far
+    def find_shortest_path(self, node1, node2):
+        if node1 not in self.connects_to(node2):
+            return None
+        current_limit = 0
+        while True:
+            r = self.find_path(node1, node2, limit = current_limit)
+            if r != None:
+                return r
+            current_limit += 1
+    def find_path(self, node1, node2, path_so_far = None, limit = None):
         if path_so_far == None:
             path_so_far = []
         path_so_far = path_so_far[:]
+        if limit != None:
+            if limit <= len(path_so_far):
+                return None
         if node1 in path_so_far:
             return None #Dead end
         path_so_far.append(node1)
@@ -682,7 +694,7 @@ class Graph:
             return path_so_far
         neighbors = self.__dict[node1]
         for n in neighbors:
-            new = self.find_path(n, node2, path_so_far)
+            new = self.find_path(n, node2, path_so_far, limit)
             if new != None:
                 return new
         return None
