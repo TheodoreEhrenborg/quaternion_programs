@@ -116,7 +116,8 @@ def add_more(whats_left ):
             for small_list in prior:
                 result.append( small_list + [x] )
     return result
-def main(how_far = 5, how_many_factors = 2, file_name = None, alternate = None ):
+def main(how_far = 5, how_many_factors = 2, file_name = None, alternate = None,
+         print_all_solutions = False ):
     n = how_many_factors
     m = how_far
     start = time.time()
@@ -170,6 +171,9 @@ def main(how_far = 5, how_many_factors = 2, file_name = None, alternate = None )
             if unique[x] == results[i]:
                 count += 1
         f.write(str(x) + " Frequency: " + str(count) + "\n")
+        if print_all_solutions:
+            f.write("This representative fulfilled these solutions:\n")
+            f.write(str( unique[x] ) + "\n")
     current_time = time.time()
     f.write("This program took "+ str(current_time - start) + " seconds" + "\n")
     f.write("This program considered " + str(len(total)) + " different solutions to the Diophantine equation." + "\n")

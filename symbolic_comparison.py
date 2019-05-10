@@ -451,6 +451,11 @@ class Product:
         self.found = False
         self.__diary = ""
         self.__log_used = False
+    def reordered(self):
+        import random
+        temp = list( self.__perm_tuple )
+        random.shuffle( temp )
+        return Product( temp )
     def get_tuple_tuple(self):
         perm_tuple = self.get_perm_tuple()
         result = []
@@ -937,19 +942,25 @@ def connects_to_main(node, all_automorphisms, all_middle, all_end ):
         neighbors = set()
         working -= searched
     return searched   
-def main(n=2, time_between_reports = 1800):
+def main(n=2, time_between_reports = 1800, reordering = False, alternate_list = None):
 #    '''Returns a tuple, where each element
 #    is a set of nodes that lie in the same 
 #    connected graph'''
     import time, random
     start_time = time.time()
     temp_count = 0
-    all_products = Product.most_products(n) #Only 48^(n-1) products
+    if alternate_list == None:
+        all_products = Product.most_products(n) #Only 48^(n-1) products
+    else:
+        all_products = alternate_list
     short_transformations = []
     short_transformations += Large_Transformation.get_all_automorphisms(n)
     short_transformations += Large_Transformation.get_all_middle_transformations(n)
     short_transformations += Large_Transformation.get_all_end_transformations(n)
     short_transformations += ["conjugate","equivalents"]
+    if reordering:
+        for x in range(len(short_transformations)):
+            short_transformations += ["reorder"]
     print "Done creating list of transformations"
     connected = []
     for x in all_products:
@@ -979,6 +990,8 @@ def main(n=2, time_between_reports = 1800):
                         temp = eqs[r]
                 elif t == "conjugate":
                     temp = temp.get_conjugate()
+                elif t == "reorder":
+                    temp = temp.reordered()
                 else:
                     temp = t.apply(temp)
                 temp.standardize()
@@ -991,9 +1004,14 @@ def main(n=2, time_between_reports = 1800):
                     if temp in other_class:
                         break
                 else:
-                    raise Exception("Can't find where temp belongs. Temp = " + str(temp))
-                for x in current_eq_class:
-                    other_class.append(x)
+                    current_eq_class.append(temp)
+                    connected.append( current_eq_class )
+                    skip = True
+                    #raise Exception("Can't find where temp belongs. Temp = " + str(temp))
+                if not skip:
+                    for x in current_eq_class:
+                        other_class.append(x)
+                skip = False
 #        temp_count += 1
 #        print "Found", temp_count, "equivalence classes so far"
 #        print "The latest one has",len(connected),"elements"
