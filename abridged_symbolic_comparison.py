@@ -6,7 +6,6 @@ class Quaternion_2:
         self.__b=float(b)
         self.__c=float(c)
         self.__d=float(d)
-        #self.coeffient_list=[self.a,self.b,self.c,self.d]
     def get_a(self):
         return self.__a
     def get_b(self):
@@ -222,9 +221,7 @@ class Signed_Permutation(Permutation):
         unsigned_tuples = ()
         for x in unsigned:
             unsigned_tuples += ( x.get_perm_tuple(),)
-        #print unsigned_tuples
         prior = Signed_Permutation.__all_signs( n )
-        #print prior
         result = ()
         for x in prior:
             for y in unsigned_tuples:
@@ -697,246 +694,7 @@ class Graph:
             new = self.find_path(n, node2, path_so_far, limit)
             if new != None:
                 return new
-        return None
-def old_main(n=2):
-    import time
-    start_time = time.time()
-    all_products = Product.most_products(n)
-    all_automorphisms = Large_Transformation.get_all_automorphisms(n)
-#    all_middle = Large_Transformation.get_all_middle_transformations(n)
-    all_end = Large_Transformation.get_all_end_transformations(n)
-    for x in all_products:
-        x.standardize()
-    for start in all_products:
-        #start = all_products[index]
-        print "Next product",start.found
-        if not(start.found):        
-            for a in all_automorphisms:
-#                print "Next automorphism"
-#            for m in all_middle:
-                for e in all_end:
-                    temp = start.get_copy()
-                    for c in (True, False):
-                        if c:
-                            temp = start.get_conjugate()
-                        else:
-                            temp = start.get_copy()
-                        temp = e.apply(temp)
-#                temp = m.apply(temp)
-                        temp = a.apply(temp)
-                        final = temp
-                        to_log = ""
-                        to_log += "Took the conjugate: " + str(c) + "\n"
-                        to_log += "Applied end transformation: " + str(e) + "\n"
-#                to_log += "Applied middle transformation: " + str(m) + "\n"
-                        to_log += "Applied automorphism: " + str(a) + "\n"
-                        to_log += "Resulting product: " + str(final) + "\n"
-                        final.standardize()
-                        to_log += "After standardization: " + str(final) + "\n\n"
-                        start.log( to_log )
-                        Product.mark_as_found( final, all_products)
-#                    for x in all_products:
-#                        print x.found
-    count = 0
-    file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
-    f = open(file_name, "a")
-    end_time = time.time()
-    f.write("This program took " + str(int(end_time - start_time)) + " seconds\n")
-    for p in all_products:
-        #print p.found
-        if p.was_log_used():
-            count += 1
-            f.write( p.get_log() )
-    f.write("\nThe program found " + str(count) + " distinct product")
-    if count != 1:
-        f.write("s")
-    f.close()
-    print "This program took " + str(int(end_time - start_time)) + " seconds\n"
-    print "The program found " + str(count) + " distinct product",
-    if count != 1:
-        print "s"
-def old_main2(n=2):
-    '''Doesn't use get_equivalents, so n=3 results in 55'''
-    import time
-    start_time = time.time()
-    all_products = Product.more_than_most_products(n)
-    all_automorphisms = Large_Transformation.get_all_automorphisms(n)
-    all_middle = Large_Transformation.get_all_middle_transformations(n)
-    all_end = Large_Transformation.get_all_end_transformations(n)
-    g = Graph()
-    print "Done creating list of transformations"
-    for x in all_products:
-        x.standardize()
-        g.add_node( str( x ) )
-    print "Done creating nodes of graph"
-    for start in all_products:       
-        for a in all_automorphisms:
-            final = a.apply(start)
-            to_log = ""
-            to_log += "Applied automorphism: " + str(a) + "\n"
-            to_log += "Resulting product: " + str(final) + "\n"
-            final.standardize()
-            to_log += "After standardization: " + str(final) + "\n\n"
-            start.log( to_log )
-            g.add_edge(str(start),str(final))
-        for m in all_middle:
-            final = m.apply(start)
-            to_log = ""
-            to_log += "Applied middle transformation: " + str(m) + "\n"
-            to_log += "Resulting product: " + str(final) + "\n"
-            final.standardize()
-            to_log += "After standardization: " + str(final) + "\n\n"
-            start.log( to_log )
-            g.add_edge(str(start),str(final))         
-        for e in all_end:
-            final = e.apply(start)
-            to_log = ""
-            to_log += "Applied end transformation: " + str(e) + "\n"
-            to_log += "Resulting product: " + str(final) + "\n"
-            final.standardize()
-            to_log += "After standardization: " + str(final) + "\n\n"
-            start.log( to_log )
-            g.add_edge(str(start),str(final))   
-        final = start.get_conjugate()
-        to_log = ""
-        to_log += "Took the conjugate"  + "\n"
-        to_log += "Resulting product: " + str(final) + "\n"
-        final.standardize()
-        to_log += "After standardization: " + str(final) + "\n\n"
-        start.log( to_log )
-        g.add_edge(str(start),str(final))
-    print "Beginning to look for connected subgraphs..."
-    connections = g.get_connected_parts()
-    count = len(connections)
-    file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
-    f = open(file_name, "a")
-    end_time = time.time()
-    f.write("This program took " + str(int(end_time - start_time)) + " seconds\n")
-    f.write("\nThe program found " + str(count) + " distinct product")
-    if count != 1:
-        f.write("s")
-    f.write("\n")
-    for p in all_products: 
-        f.write( p.get_log() )
-    f.write("Here's the set(s) of connected nodes:\n")
-    f.write(str(connections))
-    f.write("\n\nHere' the dictionary of the graph\n.")
-    f.write(str(g.get_dictionary()))
-    f.write("\n\nHere's a more human-readable version of the set of connected nodes:\n")
-    for equivalence_class in connections:
-        f.write("-----------------------\n")
-        for product in equivalence_class:
-            f.write(str(product)+"\n")
-    f.write("\n\nHere's an even more human-readable version of the set of connected nodes.\n")
-    f.write("The program does not print any products that have a permutation that doesn't start with +1\n")
-    for equivalence_class in connections:
-        f.write("-----------------------\n")
-        for product in equivalence_class:
-            if product.count("(1") == n:
-                f.write(str(product)+"\n")
-    f.close()
-    print "This program took " + str(int(end_time - start_time)) + " seconds\n"
-    print "The program found " + str(count) + " distinct",
-    if count != 1:
-        print "products"
-    else:
-        print "product"
-    return g
-def old_main3(n=2):
-    '''Returns a tuple, where each element
-    is a set of nodes that lie in the same 
-    connected graph'''
-    import time
-    start_time = time.time()
-    temp_count = 0
-    all_products = Product.more_than_most_products(n)
-    all_automorphisms = Large_Transformation.get_all_automorphisms(n)
-    all_middle = Large_Transformation.get_all_middle_transformations(n)
-    all_end = Large_Transformation.get_all_end_transformations(n)
-    print "Done creating list of transformations"
-    all_products_left = set()
-    for x in all_products:
-        x.standardize()
-        all_products_left.add(  x.get_tuple_tuple()  )
-    all_products = None
-    print "Done standardizing products and making them into tuples of tuples"
-    all_products_found_so_far = set()
-    result = ()
-    while all_products_left != set():  
-        start = all_products_left.pop()
-        connected = connects_to_main( start, all_automorphisms, all_middle, all_end )
-        all_products_found_so_far |= connected
-        result += (connected,)
-        temp_count += 1
-        print "Found", temp_count, "equivalence classes so far"
-        print "The latest one has",len(connected),"elements"
-        all_products_left -= all_products_found_so_far
-    count = len(result)
-    file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
-    f = open(file_name, "a")
-    end_time = time.time()
-    f.write("This program took " + str(int(end_time - start_time)) + " seconds\n")
-    f.write("\nThe program found " + str(count) + " distinct equivalence class")
-    if count != 1:
-        f.write("es")
-    f.write("\n")
-    f.write("\n\nHere's a human-readable version of the set of connected nodes.\n")
-    f.write("The program does not print any products that have a permutation that doesn't start with +1\n")
-    for equivalence_class in result:
-        f.write("-----------------------\n")
-        for product in equivalence_class:
-            p = str(product)
-            if p.count("(1") == n:
-                f.write(p + "\n")
-    f.write("\n\nHere's a somewhat human-readable version of the set of connected nodes:\n")
-    for equivalence_class in result:
-        f.write("-----------------------\n")
-        for product in equivalence_class:
-            p = str(product)
-            f.write(p+"\n")
-    f.write("Here's the set(s) of connected nodes:\n")
-    f.write(str(result))
-    f.close()
-    print "This program took " + str(int(end_time - start_time)) + " seconds\n"
-    print "The program found " + str(count) + " distinct",
-    if count != 1:
-        print "equivalence classes"
-    else:
-        print "equivalence class"
-def connects_to_main(node, all_automorphisms, all_middle, all_end ):
-    '''Returns a set that is the connected
-    graph of node. Not
-    recursive'''
-    searched = set()
-    working = set()
-    working.add(node)
-    neighbors = set()
-    while working != set():       
-        for w in working:
-            start = Product( tuple_tuple = w )
-            for a in all_automorphisms:
-                final = a.apply(start)
-                final.standardize()
-                neighbors.add(  final.get_tuple_tuple()  )
-            for m in all_middle:
-                final = m.apply(start)
-                final.standardize()
-                neighbors.add(  final.get_tuple_tuple()  )        
-            for e in all_end:
-                final = e.apply(start)
-                final.standardize()
-                neighbors.add(  final.get_tuple_tuple()  )  
-            final = start.get_conjugate()
-            final.standardize()
-            neighbors.add(  final.get_tuple_tuple()  )
-            for final in start.get_equivalents():
-                final.standardize()
-                neighbors.add(  final.get_tuple_tuple()  )
-        searched |= working
-        working = neighbors | set()
-        neighbors = set()
-        working -= searched
-    return searched   
+        return None 
 def main(n=2, time_between_reports = 1800):
 #    '''Returns a tuple, where each element
 #    is a set of nodes that lie in the same 
@@ -994,10 +752,6 @@ def main(n=2, time_between_reports = 1800):
                     raise Exception("Can't find where temp belongs. Temp = " + str(temp))
                 for x in current_eq_class:
                     other_class.append(x)
-#        temp_count += 1
-#        print "Found", temp_count, "equivalence classes so far"
-#        print "The latest one has",len(connected),"elements"
-#        all_products_left -= all_products_found_so_far
         count = len(connected)
         file_name = "Results of looking for 4D "+str(n)+"-tuples starting at " + str(int(start_time))
         file_name += " with checkpoint at " + str(int(checkpoint))
@@ -1016,12 +770,6 @@ def main(n=2, time_between_reports = 1800):
                 p = str(product)
                 if p.count("(1") == n:
                     f.write(p + "\n")
-#        f.write("\n\nHere's a somewhat human-readable version of the set of connected nodes:\n")
-#        for equivalence_class in result:
-#            f.write("-----------------------\n")
-#            for product in equivalence_class:
-#                p = str(product)
-#                f.write(p+"\n")
         f.write("Here's the list(s) of connected nodes:\n")
         f.write(str(connected))
         f.close()
