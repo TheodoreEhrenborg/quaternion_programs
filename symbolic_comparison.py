@@ -1,20 +1,26 @@
 class Quaternion_2:
     '''A Hamiltonian of the form a+bi+cj+dk '''
+
     def __init__(self, a=0, b=0, c=0, d=0):
-        import math 
-        self.__a=float(a)
-        self.__b=float(b)
-        self.__c=float(c)
-        self.__d=float(d)
-        #self.coeffient_list=[self.a,self.b,self.c,self.d]
+        import math
+        self.__a = float(a)
+        self.__b = float(b)
+        self.__c = float(c)
+        self.__d = float(d)
+        # self.coeffient_list=[self.a,self.b,self.c,self.d]
+
     def get_a(self):
         return self.__a
+
     def get_b(self):
         return self.__b
+
     def get_c(self):
         return self.__c
+
     def get_d(self):
         return self.__d
+
     def get_tuple(self):
         return ( self.get_a(), self.get_b(), self.get_c(), self.get_d() )
     def get_conjugate(self):
