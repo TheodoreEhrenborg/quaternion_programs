@@ -174,6 +174,8 @@ class Formula:
             if q not in results:
                 results.append(q)
                 differentFormulas.append(f)
+                if not be_quiet:
+                    print len(differentFormulas)
         k = 1
         for x in differentFormulas:
             x.serial = k
