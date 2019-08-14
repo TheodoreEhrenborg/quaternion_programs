@@ -160,8 +160,8 @@ def main(how_far=5, how_many_factors=2, file_name=None, alternate=None,
                             c = l[2]
                             d = l[3]
                             product = eval(p)
-                            coefficients = sorted([abs(product.get_a()), abs(product.get_b()),
-                                                   abs(product.get_c()), abs(product.get_d())])
+                            coefficients = sorted([abs(product.get_a()), abs(
+                                product.get_b()), abs(product.get_c()), abs(product.get_d())])
                             results[p].add(tuple(only + coefficients))
     total = set()
     unique = {}

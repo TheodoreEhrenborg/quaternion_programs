@@ -32,8 +32,19 @@ def main2(end):
                     if int(e) != e and int(
                             e + .5) != e + .5:  # Modulus is irrational
                         continue
-                    if (int(a) == a and int(b) == b and int(c) == c and int(d) == d) and mymath.gcf(
-                            mymath.gcf(mymath.gcf(a, b), c), d) == 1 and not(a % 2 and b % 2 and c % 2 and d % 2):
+                    if (
+                        int(a) == a and int(b) == b and int(c) == c and int(d) == d) and mymath.gcf(
+                        mymath.gcf(
+                            mymath.gcf(
+                                a,
+                                b),
+                            c),
+                            d) == 1 and not(
+                            a %
+                            2 and b %
+                            2 and c %
+                            2 and d %
+                            2):
                         l.append(
                             [float(a), float(b), float(c), float(d), float(e)])
                     if int(a + .5) == a + .5 and int(b + .5) == b + .5 and int(c + .5) == c + .5 and int(

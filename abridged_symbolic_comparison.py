@@ -36,8 +36,11 @@ class Quaternion_2:
 
     def __add__(self, other):
         other = self.convert(other)
-        return Quaternion(self.get_a() + other.get_a(), self.get_b() + other.get_b(),
-                          self.get_c() + other.get_c(), self.get_d() + other.get_d())
+        return Quaternion(
+            self.get_a() + other.get_a(),
+            self.get_b() + other.get_b(),
+            self.get_c() + other.get_c(),
+            self.get_d() + other.get_d())
 
     def __eq__(self, other):
         return str(self) == str(other)
@@ -57,8 +60,39 @@ class Quaternion_2:
 
     def __mul__(self, other):
         other = self.convert(other)
-        return Quaternion_2(self.get_a() * other.get_a() - self.get_b() * other.get_b() - self.get_c() * other.get_c() - self.get_d() * other.get_d(), self.get_a() * other.get_b() + self.get_b() * other.get_a() + self.get_c() * other.get_d() - self.get_d() * other.get_c(),
-                            self.get_a() * other.get_c() + self.get_c() * other.get_a() + self.get_d() * other.get_b() - self.get_b() * other.get_d(), self.get_a() * other.get_d() + self.get_d() * other.get_a() + self.get_b() * other.get_c() - self.get_c() * other.get_b())
+        return Quaternion_2(
+            self.get_a() *
+            other.get_a() -
+            self.get_b() *
+            other.get_b() -
+            self.get_c() *
+            other.get_c() -
+            self.get_d() *
+            other.get_d(),
+            self.get_a() *
+            other.get_b() +
+            self.get_b() *
+            other.get_a() +
+            self.get_c() *
+            other.get_d() -
+            self.get_d() *
+            other.get_c(),
+            self.get_a() *
+            other.get_c() +
+            self.get_c() *
+            other.get_a() +
+            self.get_d() *
+            other.get_b() -
+            self.get_b() *
+            other.get_d(),
+            self.get_a() *
+            other.get_d() +
+            self.get_d() *
+            other.get_a() +
+            self.get_b() *
+            other.get_c() -
+            self.get_c() *
+            other.get_b())
 
     def convert(self, other):
         if isinstance(other, int) or isinstance(

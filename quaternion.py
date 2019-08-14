@@ -22,7 +22,7 @@ class Quaternion:
             self.Lipschitz = True
         else:
             self.Lipschitz = False
-        if self.Lipschitz == True or (a + .5 == int(a + .5) and b + .5 == int(
+        if self.Lipschitz or (a + .5 == int(a + .5) and b + .5 == int(
                 b + .5) and c + .5 == int(c + .5) and d + .5 == int(d + .5)):
             self.Hurwitz = True
         else:
@@ -123,8 +123,39 @@ class Quaternion:
 
     def __mul__(self, other):
         other = self.convert(other)
-        return Quaternion(self.a * other.a - self.b * other.b - self.c * other.c - self.d * other.d, self.a * other.b + self.b * other.a + self.c * other.d - self.d *
-                          other.c, self.a * other.c + self.c * other.a + self.d * other.b - self.b * other.d, self.a * other.d + self.d * other.a + self.b * other.c - self.c * other.b)
+        return Quaternion(
+            self.a *
+            other.a -
+            self.b *
+            other.b -
+            self.c *
+            other.c -
+            self.d *
+            other.d,
+            self.a *
+            other.b +
+            self.b *
+            other.a +
+            self.c *
+            other.d -
+            self.d *
+            other.c,
+            self.a *
+            other.c +
+            self.c *
+            other.a +
+            self.d *
+            other.b -
+            self.b *
+            other.d,
+            self.a *
+            other.d +
+            self.d *
+            other.a +
+            self.b *
+            other.c -
+            self.c *
+            other.b)
 
     def convert(self, other):
         if isinstance(other, int) or isinstance(

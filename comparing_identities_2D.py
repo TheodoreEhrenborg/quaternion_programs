@@ -55,8 +55,17 @@ class ComplexAdjoined:
 
     def __mul__(self, other):
         assert self.__m__ == other.get_m(), "These two objects aren't compatible"
-        return ComplexAdjoined(self.__a__ * other.get_a() + self.__m__ * self.__b__ * other.get_b(),
-                               other.get_a() * self.__b__ + other.get_b() * self.__a__, self.__m__)
+        return ComplexAdjoined(
+            self.__a__ *
+            other.get_a() +
+            self.__m__ *
+            self.__b__ *
+            other.get_b(),
+            other.get_a() *
+            self.__b__ +
+            other.get_b() *
+            self.__a__,
+            self.__m__)
 
     def __repr__(self):
         return str(self.__a__) + " + " + str(self.__b__) + \
@@ -217,8 +226,14 @@ def main(how_far=5, how_many_factors=2,
         if results[x] not in unique.values():
             unique[x] = results[x]
     keys = unique.keys()
-    f = open("Results of looking for 2D " + str(how_many_factors) + "-tuples where radicand = "
-             + str(radicand) + " " + file_name, "a")
+    f = open(
+        "Results of looking for 2D " +
+        str(how_many_factors) +
+        "-tuples where radicand = " +
+        str(radicand) +
+        " " +
+        file_name,
+        "a")
     f.write("\n\n")
     f.write("This program searched over all factors that had a norm of at most " +
             str(how_far * how_far) + "\n")

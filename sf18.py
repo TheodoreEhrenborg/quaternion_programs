@@ -140,8 +140,16 @@ class Formula:
         return Quadruple(q)
 
     @classmethod
-    def everyFormula(cls, numbers=[math.pi, math.e, math.sqrt(2), math.sqrt(5)],
-                     be_random=False, be_quiet=True, vary_the_input=False):
+    def everyFormula(
+            cls,
+            numbers=[
+                math.pi,
+                math.e,
+                math.sqrt(2),
+                math.sqrt(5)],
+            be_random=False,
+            be_quiet=True,
+            vary_the_input=False):
         '''Finds all 24*128 formulas and returns the unique ones in a list
         Do not include repeats or 0 in 'numbers' AND set vary_the_input to True. '''
         l = []
@@ -200,8 +208,10 @@ class Permutation:
 
     def permute(self, g):
         '''returns a permuted version of a GenList'''
-        return GenList([g.num_list[self.pList[0] - 1], g.num_list[self.pList[1] - 1],
-                        g.num_list[self.pList[2] - 1], g.num_list[self.pList[3] - 1]])
+        return GenList([g.num_list[self.pList[0] - 1],
+                        g.num_list[self.pList[1] - 1],
+                        g.num_list[self.pList[2] - 1],
+                        g.num_list[self.pList[3] - 1]])
 
     @classmethod
     def allPermutations(cls, index=4):
@@ -336,8 +346,14 @@ class Signer:
     def sign(self, g1, g2):
         '''returns a signed version of 2 GenLists (they are in a list of length
         2)'''
-        return [GenList([g1.num_list[0], self.pList[0] * g1.num_list[1], self.pList[1] * g1.num_list[2], self.pList[2] * g1.num_list[3]]), GenList(
-            [self.pList[3] * g2.num_list[0], self.pList[4] * g2.num_list[1], self.pList[5] * g2.num_list[2], self.pList[6] * g2.num_list[3]])]
+        return [GenList([g1.num_list[0], self.pList[0] *
+                         g1.num_list[1], self.pList[1] *
+                         g1.num_list[2], self.pList[2] *
+                         g1.num_list[3]]), GenList([self.pList[3] *
+                                                    g2.num_list[0], self.pList[4] *
+                                                    g2.num_list[1], self.pList[5] *
+                                                    g2.num_list[2], self.pList[6] *
+                                                    g2.num_list[3]])]
 
     @classmethod
     def allSigners(cls):
@@ -473,8 +489,11 @@ class Quaternion_2:
 
     def __add__(self, other):
         other = self.convert(other)
-        return Quaternion(self.get_a() + other.get_a(), self.get_b() + other.get_b(),
-                          self.get_c() + other.get_c(), self.get_d() + other.get_d())
+        return Quaternion(
+            self.get_a() + other.get_a(),
+            self.get_b() + other.get_b(),
+            self.get_c() + other.get_c(),
+            self.get_d() + other.get_d())
 
     def __eq__(self, other):
         return str(self) == str(other)
@@ -494,8 +513,39 @@ class Quaternion_2:
 
     def __mul__(self, other):
         other = self.convert(other)
-        return Quaternion_2(self.get_a() * other.get_a() - self.get_b() * other.get_b() - self.get_c() * other.get_c() - self.get_d() * other.get_d(), self.get_a() * other.get_b() + self.get_b() * other.get_a() + self.get_c() * other.get_d() - self.get_d() * other.get_c(),
-                            self.get_a() * other.get_c() + self.get_c() * other.get_a() + self.get_d() * other.get_b() - self.get_b() * other.get_d(), self.get_a() * other.get_d() + self.get_d() * other.get_a() + self.get_b() * other.get_c() - self.get_c() * other.get_b())
+        return Quaternion_2(
+            self.get_a() *
+            other.get_a() -
+            self.get_b() *
+            other.get_b() -
+            self.get_c() *
+            other.get_c() -
+            self.get_d() *
+            other.get_d(),
+            self.get_a() *
+            other.get_b() +
+            self.get_b() *
+            other.get_a() +
+            self.get_c() *
+            other.get_d() -
+            self.get_d() *
+            other.get_c(),
+            self.get_a() *
+            other.get_c() +
+            self.get_c() *
+            other.get_a() +
+            self.get_d() *
+            other.get_b() -
+            self.get_b() *
+            other.get_d(),
+            self.get_a() *
+            other.get_d() +
+            self.get_d() *
+            other.get_a() +
+            self.get_b() *
+            other.get_c() -
+            self.get_c() *
+            other.get_b())
 
     def convert(self, other):
         if isinstance(other, int) or isinstance(

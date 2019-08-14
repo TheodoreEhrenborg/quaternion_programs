@@ -381,8 +381,8 @@ def four_tuples(n, file_name=None):
                                             B = product.b
                                             C = product.c
                                             D = product.d
-                                            coefficients = sorted([abs(A), abs(B),
-                                                                   abs(C), abs(D)])
+                                            coefficients = sorted(
+                                                [abs(A), abs(B), abs(C), abs(D)])
                             # results[stuff] is the set of all products for
                             # this beta, gamma, delta
                                             results[48 *
